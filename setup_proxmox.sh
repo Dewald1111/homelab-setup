@@ -12,6 +12,9 @@ MAGENTA='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# Path to the ISO storage directory
+ISO_STORAGE_PATH="/var/lib/vz/template/iso"
+
 # Function to display the main menu
 show_menu() {
     echo -e "${BLUE}\nChoose an option:${NC}"
@@ -21,7 +24,8 @@ show_menu() {
     echo -e "${YELLOW}4.${NC} File Browser Installation/Uninstallation"
     echo -e "${YELLOW}5.${NC} LXC Containers Management"
     echo -e "${YELLOW}6.${NC} Download and Setup TrueNAS SCALE"
-    echo -e "${YELLOW}7.${NC} Exit"
+    echo -e "${YELLOW}7.${NC} Check if TrueNAS SCALE ISO is Present"
+    echo -e "${YELLOW}8.${NC} Exit"
 }
 
 # Function for Proxmox VE Post Install Setup
@@ -145,7 +149,7 @@ truenas_setup() {
     fi
 
     echo -e "${GREEN}Downloading TrueNAS SCALE ISO...${NC}"
-    wget -q https://download.sys.truenas.net/TrueNAS-SCALE-Dragonfish/24.04.2/TrueNAS-SCALE-24.04.2.iso
+    wget -q https://download.sys.truenas.net/TrueNAS-SCALE-Dragonfish/24.04.2/TrueNAS-SCALE-24.04.2.iso -O "$ISO_STORAGE_PATH/TrueNAS-SCALE-24.04.2.iso"
 
     echo -e "${GREEN}TrueNAS SCALE ISO downloaded.${NC}"
 
@@ -175,6 +179,27 @@ truenas_setup() {
     echo -e "${GREEN}GPU Support: ${gpu_support:-No}${NC}"
 }
 
+# Function to check if any TrueNAS SCALE ISO is present
+check_truenas_installed() {
+    echo -e "${CYAN}Checking if TrueNAS SCALE ISO is present...${NC}"
+
+    # Check if any ISO file with "truenas" in the name is present in the ISO storage directory
+    local found_iso=$(find "$ISO_STORAGE_PATH" -type f -iname "*truenas*.iso" | head -n 1)
+
+    if [ -n "$found_iso" ]; then
+        echo -e "${GREEN}TrueNAS SCALE ISO found: ${found_iso}${NC}"
+        read -p "Do you still want to download and setup TrueNAS SCALE? (y/n): " confirm
+        if [[ $confirm != [yY] ]]; then
+            echo -e "${CYAN}Returning to main menu.${NC}"
+            return
+        fi
+    else
+        echo -e "${RED}No TrueNAS SCALE ISO found.${NC}"
+    fi
+
+    truenas_setup
+}
+
 # Main script loop
 while true; do
     show_menu
@@ -199,6 +224,9 @@ while true; do
             truenas_setup
             ;;
         7)
+            check_truenas_installed
+            ;;
+        8)
             echo -e "${CYAN}Exiting script.${NC}"
             exit 0
             ;;
