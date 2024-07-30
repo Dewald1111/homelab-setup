@@ -188,16 +188,16 @@ check_truenas_installed() {
 
     if [ -n "$found_iso" ]; then
         echo -e "${GREEN}TrueNAS SCALE ISO found: ${found_iso}${NC}"
-        read -p "Do you still want to download and setup TrueNAS SCALE? (y/n): " confirm
-        if [[ $confirm != [yY] ]]; then
+        read -p "Do you want to set up TrueNAS SCALE now? (y/n): " confirm
+        if [[ $confirm == [yY] ]]; then
+            echo -e "${CYAN}Proceeding with TrueNAS SCALE setup.${NC}"
+            truenas_setup
+        else
             echo -e "${CYAN}Returning to main menu.${NC}"
-            return
         fi
     else
         echo -e "${RED}No TrueNAS SCALE ISO found.${NC}"
     fi
-
-    truenas_setup
 }
 
 # Main script loop
