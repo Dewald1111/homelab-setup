@@ -14,6 +14,7 @@ NC='\033[0m' # No Color
 
 # Path to the ISO storage directory
 ISO_STORAGE_PATH="/var/lib/vz/template/iso"
+ISO_NAME="TrueNAS-SCALE-24.04.2.iso"
 
 # Function to display the main menu
 show_menu() {
@@ -23,8 +24,8 @@ show_menu() {
     echo -e "${YELLOW}3.${NC} TurnKey LXC Appliances Setup"
     echo -e "${YELLOW}4.${NC} File Browser Installation/Uninstallation"
     echo -e "${YELLOW}5.${NC} LXC Containers Management"
-    echo -e "${YELLOW}6.${NC} Download and Setup TrueNAS SCALE"
-    echo -e "${YELLOW}7.${NC} Check if TrueNAS SCALE ISO is Present"
+    echo -e "${YELLOW}6.${NC} Download TrueNAS SCALE ISO"
+    echo -e "${YELLOW}7.${NC} Check and Setup TrueNAS SCALE"
     echo -e "${YELLOW}8.${NC} Exit"
 }
 
@@ -139,20 +140,17 @@ lxc_containers_setup() {
     esac
 }
 
-# Function for TrueNAS SCALE download and setup
-truenas_setup() {
-    echo -e "${CYAN}\nDownloading TrueNAS SCALE...${NC}"
-    read -p "This will download TrueNAS-SCALE. Are you sure you want to continue? (y/n): " confirm
-    if [[ $confirm != [yY] ]]; then
-        echo -e "${RED}Download cancelled.${NC}"
-        return
-    fi
-
-    echo -e "${GREEN}Downloading TrueNAS SCALE ISO...${NC}"
-    wget -q https://download.sys.truenas.net/TrueNAS-SCALE-Dragonfish/24.04.2/TrueNAS-SCALE-24.04.2.iso -O "$ISO_STORAGE_PATH/TrueNAS-SCALE-24.04.2.iso"
-
+# Function for TrueNAS SCALE download
+download_truenas() {
+    echo -e "${CYAN}\nDownloading TrueNAS SCALE ISO...${NC}"
+    wget -q https://download.sys.truenas.net/TrueNAS-SCALE-Dragonfish/24.04.2/TrueNAS-SCALE-24.04.2.iso -O "$ISO_STORAGE_PATH/$ISO_NAME"
     echo -e "${GREEN}TrueNAS SCALE ISO downloaded.${NC}"
+}
 
+# Function for TrueNAS SCALE setup
+truenas_setup() {
+    echo -e "${CYAN}\nSetting up TrueNAS SCALE...${NC}"
+    
     # Setup options
     echo -e "${CYAN}\nEnter the following setup options:${NC}"
     read -p "Enter amount of RAM (e.g., 2G): " ram
@@ -179,14 +177,14 @@ truenas_setup() {
     echo -e "${GREEN}GPU Support: ${gpu_support:-No}${NC}"
 }
 
-# Function to check if any TrueNAS SCALE ISO is present
+# Function to check if TrueNAS SCALE ISO is present
 check_truenas_installed() {
     echo -e "${CYAN}Checking if TrueNAS SCALE ISO is present...${NC}"
 
-    # Check if any ISO file with "truenas" in the name is present in the ISO storage directory
-    local found_iso=$(find "$ISO_STORAGE_PATH" -type f -iname "*truenas*.iso" | head -n 1)
+    # Check if the TrueNAS SCALE ISO is present in the ISO storage directory
+    local found_iso="$ISO_STORAGE_PATH/$ISO_NAME"
 
-    if [ -n "$found_iso" ]; then
+    if [ -f "$found_iso" ]; then
         echo -e "${GREEN}TrueNAS SCALE ISO found: ${found_iso}${NC}"
         read -p "Do you want to set up TrueNAS SCALE now? (y/n): " confirm
         if [[ $confirm == [yY] ]]; then
@@ -197,6 +195,13 @@ check_truenas_installed() {
         fi
     else
         echo -e "${RED}No TrueNAS SCALE ISO found.${NC}"
+        read -p "Do you want to download TrueNAS SCALE now? (y/n): " confirm
+        if [[ $confirm == [yY] ]]; then
+            download_truenas
+            truenas_setup
+        else
+            echo -e "${CYAN}Returning to main menu.${NC}"
+        fi
     fi
 }
 
@@ -221,7 +226,7 @@ while true; do
             lxc_containers_setup
             ;;
         6)
-            truenas_setup
+            download_truenas
             ;;
         7)
             check_truenas_installed
