@@ -165,7 +165,7 @@ lxc_containers_setup() {
 # Function for TrueNAS SCALE download and setup
 truenas_setup() {
     echo -e "${CYAN}\nDownloading TrueNAS SCALE...${NC}"
-    read -p "This will download TrueNAS-SCALE. Are you sure you want to continue? (y/n): " confirm
+    read -p "This will download TrueNAS SCALE. Are you sure you want to continue? (y/n): " confirm
     if [[ $confirm != [yY] ]]; then
         echo -e "${RED}Download cancelled.${NC}"
         return
@@ -183,7 +183,7 @@ truenas_setup() {
     read -p "Enter number of CPU cores: " cpu
 
     echo -e "${YELLOW}\nIOMMU Support Check:${NC}"
-    if [[ $(dmesg | grep -i iommu) ]]; then
+    if dmesg | grep -qi iommu; then
         echo -e "${GREEN}IOMMU is enabled.${NC}"
         read -p "Do you want to enable GPU support? (y/n): " gpu_support
         if [[ $gpu_support == [yY] ]]; then
