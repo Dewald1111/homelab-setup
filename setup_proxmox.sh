@@ -157,24 +157,10 @@ truenas_setup() {
     read -p "Enter amount of boot storage (e.g., 20G): " storage
     read -p "Enter number of CPU cores: " cpu
 
-    echo -e "${YELLOW}\nIOMMU Support Check:${NC}"
-    if [[ $(dmesg | grep -i iommu) ]]; then
-        echo -e "${GREEN}IOMMU is enabled.${NC}"
-        read -p "Do you want to enable GPU support? (y/n): " gpu_support
-        if [[ $gpu_support == [yY] ]]; then
-            echo -e "${GREEN}GPU support will be enabled.${NC}"
-        else
-            echo -e "${RED}GPU support will not be enabled.${NC}"
-        fi
-    else
-        echo -e "${RED}IOMMU is not enabled. Please enable it in the BIOS/UEFI settings if you want to add GPU support.${NC}"
-    fi
-
     echo -e "${GREEN}TrueNAS SCALE setup options configured:${NC}"
     echo -e "${GREEN}RAM: $ram${NC}"
     echo -e "${GREEN}Boot Storage: $storage${NC}"
     echo -e "${GREEN}CPU Cores: $cpu${NC}"
-    echo -e "${GREEN}GPU Support: ${gpu_support:-No}${NC}"
 }
 
 # Function to check if TrueNAS SCALE ISO is present
@@ -240,4 +226,3 @@ while true; do
             ;;
     esac
 done
-
