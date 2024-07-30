@@ -1,4 +1,4 @@
-Here’s the updated README file with the correct link for TrueNAS SCALE:
+
 
 ---
 
