@@ -96,62 +96,35 @@ lxc_containers_setup() {
     case $lxc_option in
         1)
             echo -e "${GREEN}Creating Home Assistant Container LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/homeassistant.sh)\"${NC}"
-            echo -e "${GREEN}⚡ Default Settings: 2GB RAM - 16GB Storage - 2vCPU ⚡${NC}"
-            echo -e "${GREEN}Home Assistant Interface: http://IP:8123${NC}"
-            echo -e "${GREEN}Portainer Interface: https://IP:9443${NC}"
-            echo -e "${GREEN}Path to HA /config: /var/lib/docker/volumes/hass_config/_data${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/homeassistant.sh)"
             ;;
         2)
             echo -e "${GREEN}Creating Podman Home Assistant Container LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/podman-homeassistant.sh)\"${NC}"
-            echo -e "${GREEN}⚡ Default Settings: 2GB RAM - 16GB Storage - 2vCPU ⚡${NC}"
-            echo -e "${GREEN}Home Assistant Interface: http://IP:8123${NC}"
-            echo -e "${GREEN}Path to HA /config: /var/lib/containers/storage/volumes/hass_config/_data${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/podman-homeassistant.sh)"
             ;;
         3)
             echo -e "${GREEN}Creating Plex Media Server LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/plex.sh)\"${NC}"
-            echo -e "${GREEN}⚡ Default Settings: 2GB RAM - 8GB Storage - 2vCPU ⚡${NC}"
-            echo -e "${GREEN}Plex Media Server Interface: http://IP:32400/web${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/plex.sh)"
             ;;
         4)
             echo -e "${GREEN}Creating Jellyfin Media Server LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/jellyfin.sh)\"${NC}"
-            echo -e "${GREEN}⚡ Default Settings: 2GB RAM - 8GB Storage - 2vCPU ⚡${NC}"
-            echo -e "${GREEN}Jellyfin Media Server Interface: http://IP:8096${NC}"
-            echo -e "${GREEN}FFmpeg path: /usr/lib/jellyfin-ffmpeg/ffmpeg${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/jellyfin.sh)"
             ;;
         5)
             echo -e "${GREEN}Creating Jellyseerr LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/jellyseerr.sh)\"${NC}"
-            echo -e "${GREEN}⚡ Default Settings: 2GB RAM - 8GB Storage - 2vCPU ⚡${NC}"
-            echo -e "${GREEN}Jellyseerr Interface: http://IP:5055${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/jellyseerr.sh)"
             ;;
         6)
             echo -e "${GREEN}Creating Nextcloud LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/ct/nextcloudpi.sh)\"${NC}"
-            echo -e "${GREEN}⚡ Default Settings: 2GB RAM - 8GB Storage - 2vCPU ⚡${NC}"
-            echo -e "${GREEN}NextCloudPi Interface: (https)IP/${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/nextcloudpi.sh)"
             ;;
         7)
             echo -e "${GREEN}Creating Alpine Nextcloud Hub LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/alpine-nextcloud.sh)\"${NC}"
-            echo -e "${GREEN}⚡ Default Settings: 1GB RAM - 2GB Storage - 2vCPU ⚡${NC}"
-            echo -e "${GREEN}Alpine Nextcloud Hub Interface: (https)IP/${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/ct/alpine-nextcloud.sh)"
             ;;
         8)
             echo -e "${GREEN}Creating TurnKey Nextcloud LXC...${NC}"
-            echo -e "${YELLOW}Command:${NC}"
-            echo -e "${GREEN}bash -c \"\$(wget -qLO - https://github.com/tteck/Proxmox/raw/main/turnkey/turnkey.sh)\"${NC}"
-            echo -e "${GREEN}TurnKey Nextcloud Interface: (https)IP/${NC}"
+            bash -c "$(wget -qO - https://github.com/tteck/Proxmox/raw/main/turnkey/turnkey.sh)"
             ;;
         9)
             return
@@ -165,7 +138,7 @@ lxc_containers_setup() {
 # Function for TrueNAS SCALE download and setup
 truenas_setup() {
     echo -e "${CYAN}\nDownloading TrueNAS SCALE...${NC}"
-    read -p "This will download TrueNAS SCALE. Are you sure you want to continue? (y/n): " confirm
+    read -p "This will download TrueNAS-SCALE. Are you sure you want to continue? (y/n): " confirm
     if [[ $confirm != [yY] ]]; then
         echo -e "${RED}Download cancelled.${NC}"
         return
@@ -183,7 +156,7 @@ truenas_setup() {
     read -p "Enter number of CPU cores: " cpu
 
     echo -e "${YELLOW}\nIOMMU Support Check:${NC}"
-    if dmesg | grep -qi iommu; then
+    if [[ $(dmesg | grep -i iommu) ]]; then
         echo -e "${GREEN}IOMMU is enabled.${NC}"
         read -p "Do you want to enable GPU support? (y/n): " gpu_support
         if [[ $gpu_support == [yY] ]]; then
@@ -226,7 +199,7 @@ while true; do
             truenas_setup
             ;;
         7)
-            echo -e "${BLUE}Exiting script.${NC}"
+            echo -e "${CYAN}Exiting script.${NC}"
             exit 0
             ;;
         *)
